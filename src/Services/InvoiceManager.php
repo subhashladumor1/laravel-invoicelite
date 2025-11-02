@@ -129,8 +129,8 @@ class InvoiceManager implements InvoiceGeneratorInterface
         // Make sure all required data is present for templates
         $this->data['tax'] = $this->data['tax'] ?? 0;
 
-        // Render template
-        $html = $this->templateManager->render($this->template, $this->data, $this->language);
+        // Render template with format parameter
+        $html = $this->templateManager->render($this->template, $this->data, $this->language, $this->format);
 
         // Export based on format
         switch ($this->format) {
@@ -140,11 +140,76 @@ class InvoiceManager implements InvoiceGeneratorInterface
                 return file_put_contents($path, $html) !== false;
             case 'png':
             case 'jpeg':
-                // For image export, we would use Intervention Image package
-                // This is a simplified implementation
-                return file_put_contents($path, $html) !== false;
+                // For image export, we need to use a proper image generation library
+                return $this->generateImage($html, $path);
             default:
                 throw new \InvalidArgumentException("Unsupported export format: {$this->format}");
+        }
+    }
+    
+    /**
+     * Generate image from HTML content
+     */
+    protected function generateImage(string $html, string $path): bool
+    {
+        try {
+            // Always generate PDF first, then convert to image
+            $tempPdfPath = tempnam(sys_get_temp_dir(), 'invoice_') . '.pdf';
+            
+            // Generate PDF first
+            if ($this->pdfExporter->generate($html, $tempPdfPath)) {
+                // Convert PDF to image using Imagick if available
+                if (extension_loaded('imagick')) {
+                    try {
+                        $imagick = new \Imagick();
+                        $imagick->setResolution(150, 150);
+                        $imagick->readImage($tempPdfPath . '[0]'); // First page only
+                        $imagick->setImageFormat($this->format);
+                        
+                        // Adjust quality for JPEG
+                        if ($this->format === 'jpeg') {
+                            $imagick->setImageCompressionQuality(90);
+                        }
+                        
+                        // Set proper colorspace
+                        $imagick->setImageColorspace(\Imagick::COLORSPACE_RGB);
+                        
+                        $result = $imagick->writeImage($path);
+                        $imagick->clear();
+                        $imagick->destroy();
+                        
+                        // Clean up temporary PDF
+                        if (file_exists($tempPdfPath)) {
+                            unlink($tempPdfPath);
+                        }
+                        
+                        return $result;
+                    } catch (\Exception $e) {
+                        // Clean up temporary PDF even if conversion fails
+                        if (file_exists($tempPdfPath)) {
+                            unlink($tempPdfPath);
+                        }
+                        return false;
+                    }
+                } else {
+                    // If Imagick is not available, we can't properly convert PDF to image
+                    // Clean up temporary PDF
+                    if (file_exists($tempPdfPath)) {
+                        unlink($tempPdfPath);
+                    }
+                    return false;
+                }
+            }
+            
+            // Clean up temporary PDF if PDF generation failed
+            if (file_exists($tempPdfPath)) {
+                unlink($tempPdfPath);
+            }
+            
+            return false;
+        } catch (\Exception $e) {
+            // Log error or handle exception as needed
+            return false;
         }
     }
 

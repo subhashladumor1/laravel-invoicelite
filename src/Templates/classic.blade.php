@@ -1,189 +1,245 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('invoicelite::invoice.invoice') }} {{ $invoice_no }}</title>
     <style>
+        /* ---------- GLOBAL ---------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Times New Roman', Times, serif;
         }
-        
+
         body {
-            background-color: #ffffff;
-            color: #000000;
+            font-family: 'DejaVu Serif', 'Times New Roman', Times, serif;
             font-size: 14px;
-            line-height: 1.4;
+            color: #000;
+            background: #fff;
             padding: 20px;
         }
-        
-        .invoice-container {
+
+        /* ---------- MAIN CONTAINER ---------- */
+        .invoice-box {
             max-width: 800px;
             margin: 0 auto;
-            border: 1px solid #000;
+            border: 2px solid #000;
+            background: #fff;
         }
-        
+
+        /* ---------- HEADER ---------- */
         .header {
             text-align: center;
             padding: 20px;
             border-bottom: 2px solid #000;
         }
-        
+
         .header h1 {
+            font-size: 28px;
             margin: 0;
-            font-size: 2em;
             text-transform: uppercase;
+            font-weight: bold;
         }
-        
-        .invoice-meta {
-            display: flex;
-            justify-content: space-between;
+
+        .header .inv-no {
+            font-size: 16px;
+            margin-top: 8px;
+        }
+
+        /* ---------- FROM / BILL TO (two columns) ---------- */
+        .party-info {
             padding: 20px;
             border-bottom: 1px solid #000;
+            display: table;
+            width: 100%;
         }
-        
-        .company-info, .client-info {
-            width: 45%;
+
+        .party-col {
+            display: table-cell;
+            width: 50%;
+            padding: 0 15px;
+            border-right: 1px solid #000;
         }
-        
-        .section-title {
-            font-size: 1.1em;
+
+        .party-col:last-child {
+            border-right: none;
+        }
+
+        .party-col h3 {
+            font-size: 15px;
             font-weight: bold;
-            margin-bottom: 10px;
             text-decoration: underline;
+            margin-bottom: 10px;
         }
-        
-        .info-item {
-            margin-bottom: 5px;
+
+        .party-col p {
+            margin-bottom: 4px;
         }
-        
-        .invoice-details {
-            padding: 20px;
-        }
-        
-        table {
+
+        /* ---------- ITEMS TABLE ---------- */
+        .items-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
-        
-        th {
+
+        .items-table th {
             border: 1px solid #000;
+            background: #f0f0f0;
             text-align: left;
-            padding: 8px;
-            background-color: #f0f0f0;
+            padding: 10px;
+            font-weight: bold;
         }
-        
-        td {
+
+        .items-table td {
             border: 1px solid #000;
-            padding: 8px;
+            padding: 10px;
+            vertical-align: top;
         }
-        
-        .summary {
-            width: 300px;
-            margin-left: auto;
-            padding: 20px;
+
+        .items-table th:nth-child(1),
+        .items-table td:nth-child(1) {
+            width: 40%;
         }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
+
+        .items-table th:nth-child(2),
+        .items-table td:nth-child(2) {
+            width: 15%;
         }
-        
-        .summary-label {
-            font-weight: bold;
+
+        .items-table th:nth-child(3),
+        .items-table td:nth-child(3) {
+            width: 20%;
         }
-        
-        .total {
-            font-size: 1.1em;
-            font-weight: bold;
-            border-top: 2px solid #000;
-            margin-top: 10px;
-            padding-top: 10px;
+
+        .items-table th:nth-child(4),
+        .items-table td:nth-child(4) {
+            width: 25%;
         }
-        
-        .notes-section {
-            padding: 20px;
-            border-top: 1px solid #000;
+
+        /* ---------- TOTALS (right-aligned box) ---------- */
+        .totals-wrapper {
+            margin: 30px 20px 20px;
         }
-        
-        .notes-title {
-            font-weight: bold;
-            margin-bottom: 10px;
+
+        .totals {
+            float: right;
+            width: 45%;
+            max-width: 380px;
+            border: 1px solid #000;
+            background: #fff;
+            padding: 15px;
+            font-size: 14px;
         }
-        
-        .terms-section {
-            padding: 20px;
-            border-top: 1px solid #000;
-            background-color: #f9f9f9;
+
+        .totals .row {
+            display: table;
+            width: 100%;
+            padding: 6px 0;
         }
-        
-        .terms-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-top: 1px solid #000;
-            font-size: 0.9em;
-        }
-        
-        .signature-section {
-            text-align: center;
-        }
-        
-        .signature-line {
-            width: 180px;
-            height: 1px;
-            background-color: #000;
-            margin: 20px auto 10px;
-        }
-        
-        .qr-section {
-            text-align: center;
-        }
-        
-        .footer-content {
+
+        .totals .label {
+            display: table-cell;
             text-align: right;
+            padding-right: 15px;
+        }
+
+        .totals .value {
+            display: table-cell;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .totals .total-row {
+            border-top: 2px solid #000;
+            margin-top: 8px;
+            padding-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* ---------- NOTES / TERMS ---------- */
+        .section {
+            padding: 20px;
+            border-top: 1px solid #000;
+        }
+
+        .section h3 {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .section p {
+            line-height: 1.5;
+        }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            padding: 20px;
+            border-top: 1px solid #000;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .footer .signature {
+            margin-bottom: 15px;
+        }
+
+        .footer .signature img {
+            max-width: 180px;
+            max-height: 90px;
+        }
+
+        .footer .qr {
+            margin: 15px 0;
+        }
+
+        .footer .qr img {
+            width: 90px;
+            height: 90px;
+        }
+
+        .footer .note {
+            margin-top: 8px;
+            color: #555;
         }
     </style>
 </head>
+
 <body>
-    <div class="invoice-container">
+
+    <div class="invoice-box">
+
+        <!-- ==================== HEADER ==================== -->
         <div class="header">
             <h1>{{ __('invoicelite::invoice.invoice') }}</h1>
-            <p>{{ $invoice_no }}</p>
+            <div class="inv-no">{{ $invoice_no }}</div>
         </div>
 
-        <div class="invoice-meta">
-            <div class="company-info">
-                <div class="section-title">{{ __('invoicelite::invoice.from') }}</div>
-                <div class="info-item"><strong>{{ $company['name'] }}</strong></div>
-                <div class="info-item">{{ $company['address'] }}</div>
-                <div class="info-item">{{ $company['email'] }}</div>
-                <div class="info-item">{{ $company['phone'] }}</div>
-                <div class="info-item">{{ $company['website'] }}</div>
+        <!-- ==================== FROM / BILL TO ==================== -->
+        <div class="party-info">
+            <div class="party-col">
+                <h3>{{ __('invoicelite::invoice.from') }}</h3>
+                <p><strong>{{ $company['name'] }}</strong></p>
+                <p>{{ $company['address'] }}</p>
+                <p>{{ $company['email'] }}</p>
+                <p>{{ $company['phone'] }}</p>
+                <p>{{ $company['website'] }}</p>
             </div>
-
-            <div class="client-info">
-                <div class="section-title">{{ __('invoicelite::invoice.bill_to') }}</div>
-                <div class="info-item"><strong>{{ $customer['name'] }}</strong></div>
-                <div class="info-item">{{ $customer['address'] }}</div>
-                <div class="info-item">{{ $customer['email'] }}</div>
-                <div class="info-item">{{ $customer['phone'] }}</div>
+            <div class="party-col">
+                <h3>{{ __('invoicelite::invoice.bill_to') }}</h3>
+                <p><strong>{{ $customer['name'] }}</strong></p>
+                <p>{{ $customer['address'] }}</p>
+                <p>{{ $customer['email'] }}</p>
+                <p>{{ $customer['phone'] }}</p>
             </div>
         </div>
 
-        <div class="invoice-details">
-            <table>
+        <!-- ==================== ITEMS ==================== -->
+        <div style="padding:0 20px;">
+            <table class="items-table">
                 <thead>
                     <tr>
                         <th>{{ __('invoicelite::invoice.item') }}</th>
@@ -196,55 +252,74 @@
                     {!! $itemsHtml !!}
                 </tbody>
             </table>
+        </div>
 
-            <div class="summary">
-                <div class="summary-row">
-                    <span class="summary-label">{{ __('invoicelite::invoice.subtotal') }}:</span>
-                    <span>{{ $subtotal }}</span>
-                </div>
-                <div class="summary-row">
-                    <span class="summary-label">{{ __('invoicelite::invoice.tax') }} ({{ $tax }}%):</span>
-                    <span>{{ $tax_amount }}</span>
-                </div>
-                <div class="summary-row total">
-                    <span class="summary-label">{{ __('invoicelite::invoice.invoice_total') }}:</span>
-                    <span>{{ $formatted_total }}</span>
-                </div>
+        <!-- ==================== TOTALS ==================== -->
+        <div class="totals-wrapper">
+            <div class="totals">
+                <div class="row"><span class="label">{{ __('invoicelite::invoice.subtotal') }}:</span><span
+                        class="value">{{ $subtotal }}</span></div>
+                <div class="row"><span class="label">{{ __('invoicelite::invoice.tax') }}
+                        ({{ $tax }}%):</span><span class="value">{{ $tax_amount }}</span></div>
+                <div class="row total-row"><span
+                        class="label">{{ __('invoicelite::invoice.invoice_total') }}:</span><span
+                        class="value">{{ $formatted_total }}</span></div>
             </div>
         </div>
+        <div style="clear:both;"></div>
 
-        @if(!empty($notes))
-        <div class="notes-section">
-            <div class="notes-title">{{ __('invoicelite::invoice.notes') }}</div>
-            <div>{{ $notes }}</div>
-        </div>
+        <!-- ==================== NOTES ==================== -->
+        @if (!empty($notes))
+            <div class="section">
+                <h3>{{ __('invoicelite::invoice.notes') }}</h3>
+                <p>{!! nl2br(e($notes)) !!}</p>
+            </div>
         @endif
 
-        @if(!empty($terms))
-        <div class="terms-section">
-            <div class="terms-title">{{ __('invoicelite::invoice.terms') }}</div>
-            <div>{{ $terms }}</div>
-        </div>
+        <!-- ==================== TERMS ==================== -->
+        @if (!empty($terms))
+            <div class="section" style="background:#f9f9f9;">
+                <h3>{{ __('invoicelite::invoice.terms') }}</h3>
+                <p>{!! nl2br(e($terms)) !!}</p>
+            </div>
         @endif
 
+        <!-- ==================== FOOTER ==================== -->
         <div class="footer">
-            <div class="signature-section">
-                @if(!empty($signature))
-                <div><img src="{{ $signature }}" alt="Signature" style="max-width: 180px; max-height: 90px;"></div>
-                @else
-                <div class="signature-line"></div>
-                @endif
-                <div>{{ __('invoicelite::invoice.paid') }}</div>
-            </div>
-            <div class="qr-section">
-                @if(!empty($qr_code))
-                <img src="data:image/png;base64,{{ $qr_code }}" alt="QR Code" style="width: 90px; height: 90px;">
-                <div style="margin-top: 10px; font-size: 11px;">{{ __('invoicelite::invoice.invoice') }} QR</div>
-                @endif
-            </div>
-            <div class="footer-content">
-                <p>{{ __('invoicelite::invoice.thank_you') }}</p>
-                <p>{{ __('invoicelite::invoice.footer_note') }}</p>
+            <table style="width:100%; border-collapse:collapse;">
+                <tr>
+                    <!-- LEFT: Signature -->
+                    <td style="width:50%; text-align:center; vertical-align:top; padding:15px 0;">
+                        <div class="signature">
+                            @if (!empty($signature))
+                                <img src="{{ $signature }}" alt="Signature"
+                                    style="max-width:180px; max-height:90px;">
+                            @else
+                                <div style="width:180px; height:1px; background:#000; margin:20px 0 8px;"></div>
+                            @endif
+                            <div style="font-size:13px; color:#000;">{{ __('invoicelite::invoice.paid') }}</div>
+                        </div>
+                    </td>
+
+                    <!-- RIGHT: QR Code -->
+                    <td style="width:50%; text-align:center; vertical-align:top; padding:15px 0;">
+                        @if (!empty($qr_code))
+                            <div class="qr">
+                                <img src="data:image/png;base64,{{ $qr_code }}" alt="QR Code"
+                                    style="width:90px; height:90px;">
+                                <div style="font-size:11px; color:#555; margin-top:6px;">
+                                    {{ __('invoicelite::invoice.invoice') }} QR</div>
+                            </div>
+                        @endif
+                    </td>
+                </tr>
+            </table>
+            <!-- CENTER: Thank you + note -->
+            <div style="text-align:center; vertical-align:middle;">
+                <div style="font-size:13px; color:#555;">
+                    <div>{{ __('invoicelite::invoice.thank_you') }}</div>
+                    <div style="margin-top:4px;">{{ __('invoicelite::invoice.footer_note') }}</div>
+                </div>
             </div>
         </div>
     </div>

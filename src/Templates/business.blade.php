@@ -2,341 +2,175 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ __('invoicelite::invoice.invoice') }} {{ $invoice_no }}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* ---------- GLOBAL RESET ---------- */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:DejaVu Sans, sans-serif; font-size:14px; color:#333; background:#f8f9fa; }
+
+        /* ---------- WRAPPER (adds outer padding) ---------- */
+        .wrapper {
+            max-width:900px;
+            margin:40px auto;          /* bigger top/bottom margin */
+            background:#fff;
+            padding:30px;              /* outer padding on every side */
+            border-radius:4px;
         }
-        
-        body {
-            background-color: #f8f9fa;
-            color: #333;
-            font-size: 14px;
-            line-height: 1.5;
+
+        /* ---------- HEADER ---------- */
+        .header { background:#2c3e50; color:#fff; padding:30px; border-radius:4px 4px 0 0; }
+        .header .company { font-size:28px; font-weight:700; margin-bottom:12px; }
+        .header .info { font-size:14px; opacity:0.9; margin-bottom:5px; }
+        .header .invoice-title { font-size:32px; font-weight:700; text-transform:uppercase; margin-bottom:12px; }
+        .header .invoice-meta { font-size:16px; margin-bottom:8px; }
+
+        /* ---------- BILL-TO ---------- */
+        .bill-to { padding:30px 0; }                     /* vertical spacing */
+        .bill-to h3 {
+            font-size:18px; font-weight:600; color:#2c3e50;
+            border-bottom:2px solid #3498db; padding-bottom:10px;
+            margin-bottom:20px;
         }
-        
-        .invoice-container {
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
+        .bill-to p { margin-bottom:6px; }
+
+        /* ---------- TABLE ---------- */
+        .items-table { width:100%; border-collapse:collapse; margin:30px 0; }
+        .items-table th {
+            background:#3498db; color:#fff; text-align:left;
+            padding:15px; font-weight:600;
         }
-        
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            padding: 30px;
-            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
-            color: white;
+        .items-table th:nth-child(1){width:40%;}
+        .items-table th:nth-child(2){width:15%;}
+        .items-table th:nth-child(3){width:20%;}
+        .items-table th:nth-child(4){width:25%;}
+        .items-table td { padding:12px 15px; border-bottom:1px solid #eee; }
+        .items-table tbody tr:nth-child(even){background:#f9f9f9;}
+
+        /* ---------- TOTALS (right-aligned block) ---------- */
+        .totals-wrapper { margin-top:50px; }               /* extra space before totals */
+        .totals {
+            float:right; width:45%; max-width:380px;
+            border:1px solid #eee; border-radius:4px;
+            background:#fafafa; padding:20px;
         }
-        
-        .company-info {
-            flex: 1;
+        .totals .row { display:table; width:100%; padding:10px 0; }
+        .totals .label { display:table-cell; text-align:right; padding-right:20px; }
+        .totals .value { display:table-cell; text-align:right; font-weight:600; }
+        .totals .total-row {
+            border-top:2px solid #3498db; border-bottom:2px solid #3498db;
+            font-size:18px; padding-top:15px; margin-top:8px;
         }
-        
-        .invoice-header {
-            flex: 1;
-            text-align: right;
+
+        /* ---------- NOTES / TERMS ---------- */
+        .section { padding:30px 0; border-top:1px solid #eee; }
+        .section h3 { font-size:18px; font-weight:600; color:#2c3e50; margin-bottom:15px; }
+        .section p { font-size:14px; line-height:1.6; color:#555; }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            background:#2c3e50; color:#fff; padding:30px; text-align:center;
+            border-radius:0 0 4px 4px; margin-top:40px;
         }
-        
-        .company-name {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .company-details {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 5px;
-        }
-        
-        .invoice-title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-        
-        .invoice-details {
-            font-size: 16px;
-        }
-        
-        .invoice-details div {
-            margin-bottom: 8px;
-        }
-        
-        .content-section {
-            display: flex;
-            padding: 30px;
-            gap: 30px;
-        }
-        
-        .billing-section {
-            flex: 1;
-        }
-        
-        .billing-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
-        }
-        
-        .billing-details {
-            font-size: 14px;
-            line-height: 1.8;
-        }
-        
-        .billing-details div {
-            margin-bottom: 5px;
-        }
-        
-        .items-section {
-            width: 100%;
-            margin: 20px 0;
-            border-collapse: collapse;
-        }
-        
-        .items-section th {
-            background-color: #3498db;
-            color: white;
-            text-align: left;
-            padding: 15px;
-            font-weight: 600;
-        }
-        
-        .items-section td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .items-section tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
-        .items-section tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .summary-section {
-            width: 350px;
-            margin-left: auto;
-            margin-top: 30px;
-        }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .summary-row.total {
-            border-top: 2px solid #3498db;
-            border-bottom: 2px solid #3498db;
-            font-weight: 700;
-            font-size: 18px;
-            margin-top: 5px;
-            padding-top: 15px;
-        }
-        
-        .notes-section {
-            padding: 30px;
-            background-color: #f8f9fa;
-            border-top: 1px solid #eee;
-        }
-        
-        .notes-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-        
-        .notes-content {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #555;
-        }
-        
-        .terms-section {
-            padding: 30px;
-            background-color: #fff;
-            border-top: 1px solid #eee;
-        }
-        
-        .terms-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-        
-        .terms-content {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #666;
-        }
-        
-        .footer-section {
-            display: flex;
-            justify-content: space-between;
-            padding: 30px;
-            background-color: #2c3e50;
-            color: white;
-            align-items: center;
-        }
-        
-        .signature-section {
-            text-align: center;
-        }
-        
-        .signature-line {
-            width: 200px;
-            height: 1px;
-            background-color: #ddd;
-            margin: 40px auto 10px;
-        }
-        
-        .signature-text {
-            font-size: 14px;
-            color: #95a5a6;
-        }
-        
-        .qr-section {
-            text-align: center;
-        }
-        
-        .qr-text {
-            font-size: 12px;
-            margin-top: 10px;
-            color: #95a5a6;
-        }
-        
-        .footer-content {
-            text-align: right;
-            font-size: 13px;
-            color: #95a5a6;
-        }
-        
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            
-            .invoice-container {
-                box-shadow: none;
-                margin: 0;
-                border-radius: 0;
-            }
-        }
+        .footer .signature { margin-bottom:20px; }
+        .footer .signature img { max-width:200px; max-height:100px; }
+        .footer .qr { margin:20px 0; }
+        .footer .qr img { width:100px; height:100px; }
+        .footer .note { font-size:13px; color:#95a5a6; margin-top:8px; }
     </style>
 </head>
 <body>
-    <div class="invoice-container">
-        <div class="header-section">
-            <div class="company-info">
-                <div class="company-name">{{ $company['name'] }}</div>
-                <div class="company-details">{{ $company['address'] }}</div>
-                <div class="company-details">{{ $company['email'] }}</div>
-                <div class="company-details">{{ $company['phone'] }}</div>
-                <div class="company-details">{{ $company['website'] }}</div>
-            </div>
-            <div class="invoice-header">
-                <div class="invoice-title">{{ __('invoicelite::invoice.invoice') }}</div>
-                <div class="invoice-details">
-                    <div><strong>{{ __('invoicelite::invoice.invoice_no') }}:</strong> {{ $invoice_no }}</div>
-                    <div><strong>{{ __('invoicelite::invoice.date') }}:</strong> {{ $date }}</div>
-                    <div><strong>{{ __('invoicelite::invoice.due_date') }}:</strong> {{ $due_date }}</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="content-section">
-            <div class="billing-section">
-                <div class="billing-title">{{ __('invoicelite::invoice.bill_to') }}</div>
-                <div class="billing-details">
-                    <div><strong>{{ $customer['name'] }}</strong></div>
-                    <div>{{ $customer['address'] }}</div>
-                    <div>{{ $customer['email'] }}</div>
-                    <div>{{ $customer['phone'] }}</div>
-                </div>
-            </div>
-        </div>
-        
-        <table class="items-section">
-            <thead>
-                <tr>
-                    <th width="40%">{{ __('invoicelite::invoice.description') }}</th>
-                    <th width="15%">{{ __('invoicelite::invoice.quantity') }}</th>
-                    <th width="20%">{{ __('invoicelite::invoice.unit_price') }}</th>
-                    <th width="25%">{{ __('invoicelite::invoice.amount') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {!! $itemsHtml !!}
-            </tbody>
+<div class="wrapper">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="header">
+        <table width="100%">
+            <tr>
+                <td valign="top">
+                    <div class="company">{{ $company['name'] }}</div>
+                    <div class="info">{{ $company['address'] }}</div>
+                    <div class="info">{{ $company['email'] }}</div>
+                    <div class="info">{{ $company['phone'] }}</div>
+                    <div class="info">{{ $company['website'] }}</div>
+                </td>
+                <td valign="top" align="right">
+                    <div class="invoice-title">{{ __('invoicelite::invoice.invoice') }}</div>
+                    <div class="invoice-meta"><strong>{{ __('invoicelite::invoice.invoice_no') }}:</strong> {{ $invoice_no }}</div>
+                    <div class="invoice-meta"><strong>{{ __('invoicelite::invoice.date') }}:</strong> {{ $date }}</div>
+                    <div class="invoice-meta"><strong>{{ __('invoicelite::invoice.due_date') }}:</strong> {{ $due_date }}</div>
+                </td>
+            </tr>
         </table>
-        
-        <div class="summary-section">
-            <div class="summary-row">
-                <span>{{ __('invoicelite::invoice.subtotal') }}:</span>
-                <span>{{ $subtotal }}</span>
-            </div>
-            <div class="summary-row">
-                <span>{{ __('invoicelite::invoice.tax') }} ({{ $tax }}%):</span>
-                <span>{{ $tax_amount }}</span>
-            </div>
-            <div class="summary-row total">
-                <span>{{ __('invoicelite::invoice.total') }}:</span>
-                <span>{{ $formatted_total }}</span>
-            </div>
-        </div>
-        
-        @if(!empty($notes))
-        <div class="notes-section">
-            <div class="notes-title">{{ __('invoicelite::invoice.notes') }}</div>
-            <div class="notes-content">{{ $notes }}</div>
-        </div>
-        @endif
-        
-        @if(!empty($terms))
-        <div class="terms-section">
-            <div class="terms-title">{{ __('invoicelite::invoice.terms') }}</div>
-            <div class="terms-content">{{ $terms }}</div>
-        </div>
-        @endif
-        
-        <div class="footer-section">
-            <div class="signature-section">
-                @if(!empty($signature))
-                <div><img src="{{ $signature }}" alt="Signature" style="max-width: 200px; max-height: 100px;"></div>
-                @else
-                <div class="signature-line"></div>
-                @endif
-                <div class="signature-text">{{ __('invoicelite::invoice.paid') }}</div>
-            </div>
-            <div class="qr-section">
-                @if(!empty($qr_code))
-                <img src="data:image/png;base64,{{ $qr_code }}" alt="QR Code" style="width: 100px; height: 100px;">
-                <div class="qr-text">{{ __('invoicelite::invoice.invoice') }} QR</div>
-                @endif
-            </div>
-            <div class="footer-content">
-                <div>{{ __('invoicelite::invoice.thank_you') }}</div>
-                <div>{{ __('invoicelite::invoice.footer_note') }}</div>
-            </div>
+    </div>
+
+    <!-- ==================== BILL TO ==================== -->
+    <div class="bill-to">
+        <h3>{{ __('invoicelite::invoice.bill_to') }}</h3>
+        <p><strong>{{ $customer['name'] }}</strong></p>
+        <p>{{ $customer['address'] }}</p>
+        <p>{{ $customer['email'] }}</p>
+        <p>{{ $customer['phone'] }}</p>
+    </div>
+
+    <!-- ==================== ITEMS ==================== -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>{{ __('invoicelite::invoice.description') }}</th>
+                <th>{{ __('invoicelite::invoice.quantity') }}</th>
+                <th>{{ __('invoicelite::invoice.unit_price') }}</th>
+                <th>{{ __('invoicelite::invoice.amount') }}</th>
+            </tr>
+        </thead>
+        <tbody>{!! $itemsHtml !!}</tbody>
+    </table>
+
+    <!-- ==================== TOTALS ==================== -->
+    <div class="totals-wrapper">
+        <div class="totals">
+            <div class="row"><span class="label">{{ __('invoicelite::invoice.subtotal') }}:</span><span class="value">{{ $subtotal }}</span></div>
+            <div class="row"><span class="label">{{ __('invoicelite::invoice.tax') }} ({{ $tax }}%):</span><span class="value">{{ $tax_amount }}</span></div>
+            <div class="row total-row"><span class="label">{{ __('invoicelite::invoice.total') }}:</span><span class="value">{{ $formatted_total }}</span></div>
         </div>
     </div>
+    <div style="clear:both;"></div>
+
+    <!-- ==================== NOTES ==================== -->
+    @if(!empty($notes))
+    <div class="section">
+        <h3>{{ __('invoicelite::invoice.notes') }}</h3>
+        <p>{!! nl2br(e($notes)) !!}</p>
+    </div>
+    @endif
+
+    <!-- ==================== TERMS ==================== -->
+    @if(!empty($terms))
+    <div class="section" style="background:#fff;">
+        <h3>{{ __('invoicelite::invoice.terms') }}</h3>
+        <p style="font-size:13px; color:#666;">{!! nl2br(e($terms)) !!}</p>
+    </div>
+    @endif
+
+    <!-- ==================== FOOTER ==================== -->
+    <div class="footer">
+        <div class="signature">
+            @if(!empty($signature))
+                <img src="{{ $signature }}" alt="Signature">
+            @else
+                <div style="width:200px;height:1px;background:#95a5a6;margin:30px auto 10px;"></div>
+            @endif
+            <div class="note">{{ __('invoicelite::invoice.paid') }}</div>
+        </div>
+
+        @if(!empty($qr_code))
+        <div class="qr">
+            <img src="data:image/png;base64,{{ $qr_code }}" alt="QR Code">
+            <div class="note">{{ __('invoicelite::invoice.invoice') }} QR</div>
+        </div>
+        @endif
+
+        <div class="note">{{ __('invoicelite::invoice.thank_you') }}</div>
+        <div class="note">{{ __('invoicelite::invoice.footer_note') }}</div>
+    </div>
+</div>
 </body>
 </html>
