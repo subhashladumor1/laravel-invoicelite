@@ -170,25 +170,24 @@ We now offer 5 professional templates:
 ### Template Preview
 
 #### Business Template
-![Business Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/preview/business.png)
+![Business Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/main/src/preview/business.png)
 *Professional business template with QR code and modern styling*
 
 #### Corporate Template
-![Corporate Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/preview/corporate.png)
+![Corporate Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/main/src/preview/corporate.png)
 *Corporate-style template with branding options*
 
 #### Modern Template
-![Modern Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/preview/modern.png)
+![Modern Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/main/src/preview/modern.png)
 *Clean, gradient design with modern aesthetics*
 
 #### Classic Template
-![Classic Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/preview/classic.png)
+![Classic Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/main/src/preview/classic.png)
 *Traditional invoice layout with borders*
 
 #### Minimal Template
-![Minimal Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/preview/minimal.png)
+![Minimal Template](https://raw.githubusercontent.com/subhashladumor1/laravel-invoicelite/main/src/preview/minimal.png)
 *Simple, minimalist design*
-
 
 ---
 
