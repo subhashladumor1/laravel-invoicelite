@@ -3,7 +3,7 @@
     "description": "💼 Laravel InvoiceLite — Multi-language, multi-country, professional invoice generator with PDF/Image export, templates, taxes & sharing 🚀",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "keywords": [
         "laravel invoice",
         "invoice generator",
