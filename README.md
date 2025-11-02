@@ -167,20 +167,6 @@ We now offer 5 professional templates:
 4. **Business** - Professional business template with QR code
 5. **Corporate** - Corporate-style template with branding options
 
-### Template Preview
-
-![Business Template](https://cdn.dribbble.com/userupload/22459797/file/original-ddcc7a7a689a009160d8d5d03385b428.png?resize=752x564&vertical=center)
-*Business Template*
-
-![Corporate Template](https://cdn.dribbble.com/userupload/16092429/file/original-6c252a9a0e3dc275213c1b2a8327fb90.png?resize=752x&vertical=center)
-*Corporate Template*
-
-![Modern Template](https://cdn.dribbble.com/userupload/10162802/file/original-ff594ddaf5218e3ca23f64cf64f36b87.png?resize=752x&vertical=center)
-*Modern Template*
-
-![Classic Template](https://cdn.dribbble.com/userupload/17147152/file/original-c92136048f132531a06c921b6be0801b.jpg?resize=752x&vertical=center)
-*Classic Template*
-
 ---
 
 ## 📱 QR Code Generation
